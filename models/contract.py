@@ -13,13 +13,16 @@ from sqlalchemy.orm import relationship, declarative_base
 from datetime import datetime
 import uuid
 
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+
 Base = declarative_base()
 
 
 class Contract(Base):
     __tablename__ = "contracts"
 
-    id = Column(Integer(), primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     # client_id = Column(
     #     UUID(as_uuid=True), ForeignKey("customers.id"), nullable=False
     # )
@@ -30,6 +33,13 @@ class Contract(Base):
     remaining_amount = Column(Float, nullable=False)
     creation_date = Column(DateTime, default=datetime.now, nullable=False)
     is_signed = Column(Boolean, default=False, nullable=False)
+
+    # Relation with collaborator:
+    commercial_contact: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["User"] = relationship(back_populates="contracts_map")
+
+    # user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    # user: Mapped["User"] = relationship(back_populates="contracts")
 
     # customers = relationship("Customer", back_populates="contracts")
     # collaborators = relationship("Collaborator", back_populates="contracts")
